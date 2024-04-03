@@ -29,6 +29,7 @@ import java.util.Date;
     private BigDecimal salary;
     private Integer managerId;
 
+
     public Employee(Integer id, String firstName, String lastName, String email, String phoneNumber, Date hireDate, String jobTitle, String department, BigDecimal salary, Integer managerId) {
         this.id = id;
         this.firstName = firstName;
@@ -92,7 +93,7 @@ public class ReadTextFile {
                                             .collect(Collectors.toList());
 
             // Serialize the list of employees
-            try (FileOutputStream fos = new FileOutputStream("employees.ser") ;
+            try (FileOutputStream fos = new FileOutputStream("employees1.ser") ;
                  ObjectOutputStream oos = new ObjectOutputStream(fos)) {
                 oos.writeObject(employees);
             }

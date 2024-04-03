@@ -1426,4 +1426,31 @@ public class Main {
     }
 }
 ```
+To find the frequency of each word in a list of strings using the Stream API, you can first flatMap the list of strings into a stream of words, then use Collectors.groupingBy to group the words by their identity (i.e., the word itself), and finally use Collectors.counting to count the occurrences of each word. Here's how you can do it:
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        List<String> strings = Arrays.asList("Hello", "World", "Hello", "Java", "World", "Hello");
+
+        Map<String, Long> wordFrequency = strings.stream()
+                                                  .flatMap(str -> Arrays.stream(str.split("\\s+")))
+                                                  .collect(Collectors.groupingBy(String::toLowerCase, Collectors.counting()));
+
+        System.out.println("Word frequency: " + wordFrequency);
+    }
+}
+```
+
+Output:
+```
+Word frequency: {java=1, hello=3, world=2}
+```
+
+In this program, the `flatMap` method is used to split each string into words and flatten them into a stream of words. The `groupingBy` collector is then used to group the words by their identity (ignoring case) and count the occurrences using the `counting` collector.
 

@@ -53,7 +53,7 @@ public class ReadTextFile {
                     .collect(Collectors.toList());
 
             // Serialize the list of employees
-            try (FileOutputStream fos = new FileOutputStream("employees.ser");
+            try (FileOutputStream fos = new FileOutputStream("employees1.ser");
                  ObjectOutputStream oos = new ObjectOutputStream(fos)) {
                 oos.writeObject(employees);
             }
