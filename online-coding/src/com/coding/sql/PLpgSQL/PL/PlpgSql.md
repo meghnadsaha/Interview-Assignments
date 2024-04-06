@@ -767,13 +767,155 @@ VALUES (10000, 5, 36, calculate_monthly_installment(10000, 5, 36)),
 
 ```
 14. **Employee Training Management**: Develop a PLpg/SQL procedure to track employee training sessions and ensure that employees complete mandatory training courses.
+```roomsql
+truncate  employees cascade;
+truncate  training_sessions cascade;
 
+-- Insert dummy employees
+INSERT INTO employees  (name) VALUES
+('Alice'),
+('Bob'),
+('Charlie'),
+('David');
+
+-- Insert dummy training sessions
+INSERT INTO training_sessions  (name,mandatory) VALUES
+('Session A',true),
+('Session B',true),
+('Session C',true),
+('Session D',true);
+
+select  * from  training_sessions;
+select  * from  employees;
+select  * from  employee_training et ;
+
+
+
+
+```
 15. **Energy Consumption Analysis**: Write a PLpg/SQL query to analyze energy consumption data and identify areas where energy-saving measures can be implemented.
+```roomsql
+CREATE TABLE energy_data (
+    id SERIAL PRIMARY KEY,
+    area VARCHAR(255),
+    energy_consumption DECIMAL,
+    timestamp TIMESTAMP
+);
+INSERT INTO energy_data (area, energy_consumption, timestamp) VALUES
+('Room A', 100.5, '2023-04-01 08:00:00'),
+('Room A', 110.3, '2023-04-01 09:00:00'),
+('Room A', 95.2, '2023-04-01 10:00:00'),
+('Room B', 120.7, '2023-04-01 08:00:00'),
+('Room B', 130.2, '2023-04-01 09:00:00'),
+('Room B', 115.8, '2023-04-01 10:00:00'),
+('Floor 1', 500.2, '2023-04-01 08:00:00'),
+('Floor 1', 510.5, '2024-04-01 09:00:00'),
+('Floor 1', 495.1, '2024-04-01 10:00:00');
 
+
+select * from energy_data ed ;
+CREATE OR REPLACE PROCEDURE analyze_energy_consumption()
+ AS $$
+DECLARE
+    baseline_energy_consumption DECIMAL;
+    area_energy RECORD;
+BEGIN
+    -- Calculate the baseline energy consumption (e.g., average energy consumption for the last month)
+    SELECT AVG(energy_consumption)
+    INTO baseline_energy_consumption
+    FROM energy_data
+    WHERE date_trunc('month', "timestamp") = date_trunc('month', CURRENT_DATE - interval '12 month');
+
+    -- Analyze energy consumption data
+    FOR area_energy IN
+        SELECT area, SUM(energy_consumption) AS total_energy_consumption
+        FROM energy_data
+        GROUP BY area
+    LOOP
+        -- Compare total energy consumption for each area with the baseline value
+        IF area_energy.total_energy_consumption > baseline_energy_consumption THEN
+            RAISE NOTICE 'Area % has higher than baseline energy consumption: %', area_energy.area, area_energy.total_energy_consumption;
+            -- Implement energy-saving measures for the area
+            -- For example, update a table to mark the area for energy-saving measures
+        END IF;
+    END LOOP;
+END $$ LANGUAGE plpgsql;
+
+call analyze_energy_consumption()
+--
+-- SELECT AVG(energy_consumption)
+--    FROM energy_data
+--    WHERE date_trunc('month', "timestamp") = date_trunc('month', CURRENT_DATE - interval '12 month');
+
+```
 16. **Transportation Management**: Create a PLpg/SQL function to calculate the optimal route for transporting goods between multiple locations, considering factors such as distance and traffic conditions.
 
 17. **Insurance Claims Processing**: Develop a PLpg/SQL procedure to process insurance claims and calculate the payout amount based on the policy terms and claim details.
+```roomsql
+CREATE TABLE policies (
+    id SERIAL PRIMARY KEY,
+    policy_number VARCHAR(255) NOT NULL,
+    amount DECIMAL NOT NULL
+);
 
+
+CREATE TABLE claims (
+    id SERIAL PRIMARY KEY,
+    policy_id INT NOT NULL,
+    claim_amount DECIMAL NOT NULL,
+    status VARCHAR(255) NOT NULL DEFAULT 'Pending',
+    payout DECIMAL
+);
+--
+--ALTER TABLE claims
+--RENAME COLUMN amount TO claim_amount;
+
+truncate policies;
+
+INSERT INTO policies (policy_number, amount) VALUES
+('POL001', 5000.00),
+('POL002', 10000.00),
+('POL003', 7500.00);
+
+truncate claims;
+INSERT INTO claims (policy_id, claim_amount) VALUES
+(1, 3000.00),
+(2, 12000.00),
+(3, 8000.00);
+
+select * from policies;
+select * from claims;
+
+
+
+CREATE OR REPLACE FUNCTION process_claim(claim_id INT) RETURNS VOID AS $$
+DECLARE
+    claim_record RECORD;
+    policy_amount DECIMAL;
+    payout_amount DECIMAL;
+BEGIN
+    -- Get the claim record
+    SELECT * INTO claim_record FROM claims WHERE id = claim_id;
+
+    -- Check if the claim status is 'Pending'
+    IF claim_record.status = 'Pending' THEN
+        -- Get the policy amount for the claim
+        SELECT amount INTO policy_amount FROM policies WHERE id = claim_record.policy_id;
+
+        -- Calculate the payout amount (e.g., 80% of the claim amount)
+        payout_amount := claim_record.claim_amount * 0.8;
+
+        -- Update the claim record with the payout amount and status
+        UPDATE claims SET payout = payout_amount, status = 'Processed' WHERE id = claim_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+select  process_claim(4)
+
+
+
+```
 18. **Student Performance Analysis**: Write a PLpg/SQL script to analyze student performance data and identify students who may need additional support.
 
 19. **Event Management**: Create a PLpg/SQL procedure to manage event registrations and send confirmation emails to registered participants.
