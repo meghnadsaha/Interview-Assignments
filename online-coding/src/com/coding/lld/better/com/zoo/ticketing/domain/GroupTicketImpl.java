@@ -18,9 +18,27 @@ public class GroupTicketImpl implements GroupTicket {
     }
 
     @Override
-    public void setTotalCost ( int totalCost ) {
+    public void setTotalCost () {
+        int totalCost = 0;
+        for (Guest guest : guests) {
+            if (guest.getAge() <= 2) {
+                totalCost += 0;
+            } else if (guest.getAge() < 18) {
+                totalCost += 100;
+            } else if (guest.getAge() < 60) {
+                totalCost += 500;
+            } else {
+                totalCost += 300;
+            }
+        }
         this.totalCost = totalCost;
     }
+
+    @Override
+    public int getTotalCost () {
+        return totalCost;
+    }
+
 
     @Override
     public void displayTicketDetails () {

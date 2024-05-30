@@ -62,9 +62,7 @@ public class ZooTicketingSystemGoodOops {
             ticket.addGuest(age);
         }
 
-        TicketPriceCalculator calculator = new TicketPriceCalculator();
-        ticket.setTotalCost(calculator.calculateTotalCost(((GroupTicketImpl) ticket).guests.toArray(new Guest[0])));
-
+          ((GroupTicketImpl) ticket).setTotalCost();
         System.out.println("\nTicket Issued Successfully!");
         System.out.println("Ticket Details:");
         ticket.displayTicketDetails();
@@ -86,8 +84,7 @@ public class ZooTicketingSystemGoodOops {
         }
 
         TicketPriceCalculator calculator = new TicketPriceCalculator();
-        ticket.setTotalCost(calculator.calculateTotalCost(((GroupTicketImpl) ticket).guests.toArray(new Guest[0])));
-
+        ((GroupTicketImpl) ticket).setTotalCost();
         System.out.println("\nGroup Ticket Issued Successfully!");
         System.out.println("Ticket Details:");
         ticket.displayTicketDetails();
