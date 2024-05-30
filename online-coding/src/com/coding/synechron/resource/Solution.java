@@ -1,4 +1,4 @@
-package com.coding.synechron;
+package com.coding.synechron.resource;
 
 import java.util.HashMap;
 import java.util.Map;
