@@ -95,7 +95,8 @@ public class ZooTicketingSystem {
 
         for (int i = 0; i < numGuests; i++) {
             System.out.print("Enter age of guest " + (i + 1) + ": ");
-            int age = scanner.nextInt();
+//            int age = scanner.nextInt();
+            int age = getValidAge(scanner);
             ticket.addGuest(i, age);
         }
 
@@ -106,6 +107,33 @@ public class ZooTicketingSystem {
         ticket.displayTicketDetails();
 
         return ticket;
+    }
+
+    private static int getValidAge(Scanner scanner) {
+        int age = 0;
+        boolean reselect = false;
+        do {
+            try {
+                if (!reselect) {
+                    System.out.print("Enter age of guest: ");
+                    age = scanner.nextInt();
+                }
+                if (age <= 0) {
+                    System.out.println("Age must be greater than 0. Enter -1 to cancel or re-enter age:");
+                    int choice = scanner.nextInt();
+                    if (choice == -1) {
+                        return -1; // Cancel entry
+                    }
+                    reselect = true;
+                } else {
+                    return age; // Valid age entered
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter a valid age.");
+                scanner.next(); // consume invalid input
+                reselect = true;
+            }
+        } while (true);
     }
 
     public static void validateTicket(Ticket ticket) {
